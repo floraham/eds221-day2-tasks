@@ -1,0 +1,79 @@
+---
+title: "eds221-task-wild"
+format: html
+editor: visual
+execute: 
+  warning: false
+---
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+```
+```{r}
+
+mack_verts <- read_csv(here("data", "AS00601.csv")) %>% clean_names()
+
+```
+store the fifth value in column "Weight" as mc_wt_5
+
+```{r}
+mc_wt_5 <- mack_verts$weight[5]
+```
+
+store 8th-20th value in the "LENGTH1" column as mc_length_8_20. check by looking at your data frame to confirm 
+
+```{r}
+i <- seq(8,20)
+mc_length_8_20 <- mack_verts$length1[i]
+```
+
+store everything in colmumn SAMPLEDATE as a vector called mc_dates 
+
+```{r}
+mc_dates <- mack_verts$sampledate 
+```
+Create a subset that only contains observations for Pacific Giant Salamanders (species Dicamptodon tenebrosus, stored in species as DITE). Store the subset as mc_salamanders. Hint: see dplyr::filter()!
+
+```{r}
+mc_salamanders <- mack_verts %>% dplyr::filter(species == "DITE")
+```
+
+Create a scatterplot of length1 (snout-vent length in millimeters) versus weight (grams) for all salamanders in the subset you created above, mc_salamanders. Update axis labels, title, subtitle, and add a caption with the data source. Customize point color and size, possibly opacity, and theme.
+
+```{r}
+mc_salamanders %>% ggplot(aes(x= length1, y= weight)) + geom_point() + labs(title = "snout-vent length (mm) vs weight (g)") + xlab("length (mm)") + ylab("weight (g)")
+
+ggsave(filename = "salamander_size.png", path = here("figs") )
+```
+Similar to above, make a subset called mc_trout that only contains observations for cutthroat trout (species “ONCL”)
+
+```{r}
+mc_trout <- mack_verts %>% dplyr::filter(species == "ONCL")
+```
+
+Create a scatterplot of length1 by weight for all trout in the dataset
+
+```{r}
+mc_trout_graph <- mc_trout %>% 
+  ggplot(
+    aes(x=length1, y=weight, color=mc_trout$sitecode)) +
+  geom_point() + 
+  facet_wrap(facets = "reach") + labs(title = "trout length by weight") + 
+ ylab("weight") + xlab("length")
+mc_trout_graph
+```
+
+Customize so that the point color depends on reach
+Customize your color scheme (e.g. scale_color_manual())
+Facet your plot by creek reach (facet_wrap(~...))
+Update graph axis labels and title
+Export your graph as cutthroat_size.png to the figs folder
+
+```{r}
+ggsave(filename="trout_length_by_weight_at_different_sites.png", path=here("figs"))
+
+```
+
+
+
